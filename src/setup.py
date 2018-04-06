@@ -8,7 +8,7 @@ except ImportError:
 
 dist = setup(
     name='im_future',
-    version='0.1.3',
+    version='0.1.4',
     description='@future; distributed hierarchical futures for Google App Engine, Python standard environment',
     author='Emlyn O\'Regan',
     author_email='emlynoregan@gmail.com',
