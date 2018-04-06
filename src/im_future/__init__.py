@@ -27,9 +27,9 @@ class FutureCancelled(Exception):
     pass
 
 class _FutureProgress(ndb.model.Model):
-    localprogress = ndb.IntegerProperty()
-    calculatedprogress = ndb.IntegerProperty()
-    weight = ndb.IntegerProperty()
+    localprogress = ndb.FloatProperty()
+    calculatedprogress = ndb.FloatProperty()
+    weight = ndb.FloatProperty()
 
 class _Future(ndb.model.Model):
     stored = ndb.DateTimeProperty(auto_now_add = True)
