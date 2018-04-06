@@ -12,6 +12,7 @@ from google.appengine.api import taskqueue
 from google.appengine.api.datastore_errors import Timeout
 import time
 from im_util import logdebug, logwarning, logexception
+from im_debouncedtask import debouncedtask
 
 class FutureReadyForResult(Exception):
     pass
@@ -189,8 +190,8 @@ class _Future(ndb.model.Model):
     def _set_local_progress_for_success(self):
         progressObj = self._get_progressobject()
         logdebug("progressObj = %s" % progressObj)
-        weight = self.get_weight(progressObj)
-        weight = weight if not weight is None else 1
+        weight = self.get_weight(progressObj) or 0
+#         weight = weight if not weight is None else 1
         logdebug("weight = %s" % weight)
         localprogress = self.get_localprogress(progressObj)
         logdebug("localprogress = %s" % localprogress)
@@ -309,8 +310,8 @@ class _Future(ndb.model.Model):
         if parentkey:
             taskkwargs = self.get_taskkwargs()
 
-#             @debouncedtask(repeatsec=60, **taskkwargs)
-            @task(**taskkwargs)
+            @debouncedtask(**taskkwargs)
+#             @task(**taskkwargs)
             def docalculate_parent_progress():
                 parent = parentkey.get()
                 if parent:
