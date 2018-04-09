@@ -310,7 +310,7 @@ class _Future(ndb.model.Model):
         if parentkey:
             taskkwargs = self.get_taskkwargs()
 
-            @debouncedtask(**taskkwargs)
+            @debouncedtask(repeatsec=5, **taskkwargs)
 #             @task(**taskkwargs)
             def docalculate_parent_progress():
                 parent = parentkey.get()
