@@ -362,20 +362,21 @@ class _Future(ndb.model.Model):
                 progressobj.put()
             
     def cancel(self):
-        children = get_children(self.key)
-        if children:
-            taskkwargs = self.get_taskkwargs()
-            
-            @task(**taskkwargs)
-            def cancelchild(childkey):
-                child2 = childkey.get()
-                if child2:
-                    child2.cancel()
+        if not self.has_result():
+            children = get_children(self.key)
+            if children:
+                taskkwargs = self.get_taskkwargs()
                 
-            for child in children:
-                cancelchild(child.key)
-
-        self.set_failure(FutureCancelled("cancelled by caller"))
+                @task(**taskkwargs)
+                def cancelchild(childkey):
+                    child2 = childkey.get()
+                    if child2:
+                        child2.cancel()
+                    
+                for child in children:
+                    cancelchild(child.key)
+    
+            self.set_failure(FutureCancelled("cancelled by caller"))
 
     def to_dict(self, level=0, maxlevel = 5, recursive = True, futuremapf=None):
 #         if not self.has_result():
